@@ -3,8 +3,8 @@ from typing import Optional
 
 class ActividadOut(BaseModel):
     encabezado: str
-    descripcion: str
-    calificacion: Optional[float]
+    descp: str
+    rating: Optional[float]
     latitud: float
     longitud: float
     foto_url: Optional[str]
