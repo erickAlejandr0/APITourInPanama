@@ -10,4 +10,7 @@ DATABASE_URL = os.getenv("SUPABASE_DB_URL")
 async def connect_db():
     if not DATABASE_URL:
         raise ValueError("SUPABASE_DB_URL no está definido en el entorno")
-    return await asyncpg.connect(DATABASE_URL)
+    return await asyncpg.connect(
+        DATABASE_URL,
+        statement_cache_size=0
+    )
