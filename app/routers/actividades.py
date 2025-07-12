@@ -21,6 +21,6 @@ async def get_actividad():
         
         return[]
     except Exception as e:
-        raise HTTPException(500,f"error al cargar actividades{str(e)}")
+        raise HTTPException(500,f"error al cargar actividades desde la base de datos{str(e)}")
 
         

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import usuarios
+from .routers import usuarios, actividades
 from contextlib import asynccontextmanager
 
 
@@ -22,4 +22,5 @@ app.add_middleware(
 
 # Incluir routers
 app.include_router(usuarios.router)
+app.include_router(actividades.router)
 
