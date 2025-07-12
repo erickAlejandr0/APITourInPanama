@@ -10,7 +10,7 @@ class ActividadOut(BaseModel):
     foto_url: Optional[str]
 
 class ActividadesCategoriaOut(BaseModel):
-    id_cat: str
+    id_cat: int
     encabezado: str
     descp: str
     rating: Optional[float]
