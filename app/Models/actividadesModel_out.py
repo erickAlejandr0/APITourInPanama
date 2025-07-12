@@ -20,7 +20,7 @@ class ActividadCercanaOut(BaseModel):
     longitud: float
     distancia_m: float
     foto_url: Optional[str]
-    id_categoria: int
+    id_cat: int
 
 
 class Config:

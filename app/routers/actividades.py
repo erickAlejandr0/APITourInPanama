@@ -50,6 +50,7 @@ async def get_actividad(lat:float, lon:float, radio:float):
         if not result:
             raise HTTPException(status_code=404, detail="No hay actividades cercanas en tu ubicación.")
 
+        
         return[dict(row) for row in result]
     except Exception as e:
         raise HTTPException(500,f"error al cargar actividades cercanas: {str(e)}")
