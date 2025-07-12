@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 class ActividadOut(BaseModel):
-    titulo: str
+    encabezado: str
     descripcion: str
     calificacion: Optional[float]
     latitud: float
