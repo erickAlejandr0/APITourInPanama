@@ -38,3 +38,19 @@ async def get_actividad(idcategoria: int):
     except Exception as e:
         raise HTTPException(500,f"error al cargar actividades desde la base de datos{str(e)}")
         
+
+@router.get("/cercanas_de/{lat}/{lon}/{radio}", response_model=list[ActividadCercanaOut])
+async def get_actividad(lat:float, lon:float, radio:float):
+    try:
+        conn = await connect_db()
+        result = await conn.fetch(
+            "SELECT * FROM actividades_cercanas_usuario($1,$2,$3)", lat, lon, radio
+        )
+        await conn.close()
+        if not result:
+            raise HTTPException(status_code=404, detail="No hay actividades cercanas en tu ubicación.")
+
+        return[dict(row) for row in result]
+    except Exception as e:
+        raise HTTPException(500,f"error al cargar actividades cercanas: {str(e)}")
+        
