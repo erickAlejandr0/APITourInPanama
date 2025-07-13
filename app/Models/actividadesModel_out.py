@@ -1,6 +1,9 @@
 from pydantic import BaseModel
 from typing import Optional
 
+class MensajeOut(BaseModel):
+    mensaje: str
+
 class ActividadOut(BaseModel):
     id: int
     encabezado: str

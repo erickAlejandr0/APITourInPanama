@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request
 import asyncpg
-from app.Models.actividadesModel_out import ActividadOut,ActividadCercanaOut
+from typing import Union
+from app.Models.actividadesModel_out import ActividadOut,ActividadCercanaOut,MensajeOut
 from app.dataBase.db import connect_db
 
 router = APIRouter(
@@ -39,7 +40,7 @@ async def get_actividad(idcategoria: int):
         raise HTTPException(500,f"error al cargar actividades desde la base de datos{str(e)}")
         
 
-@router.get("/cercanas_de/{lat}/{lon}/{radio}", response_model=list[ActividadCercanaOut])
+@router.get("/cercanas_de/{lat}/{lon}/{radio}", response_model=Union[list[ActividadCercanaOut], MensajeOut])
 async def get_actividad(lat:float, lon:float, radio:float):
     try:
         conn = await connect_db()
@@ -49,7 +50,7 @@ async def get_actividad(lat:float, lon:float, radio:float):
         await conn.close()
 
         if not result:
-            return {"mensaje": "No hay actividades cercanas en tu ubicación.", "data": []}
+            return MensajeOut(mensaje="No hay actividades cercanas en tu ubicación.")
 
 
         return[dict(row) for row in result]
