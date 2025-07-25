@@ -7,3 +7,5 @@ class Itinerario(BaseModel):
     fecha: date
     hora: time
     nota: str
+    id_act: int
+    id_u: int

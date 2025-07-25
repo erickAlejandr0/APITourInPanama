@@ -63,7 +63,7 @@ async def save_itinerario(i:Itinerario):
     try:
         conn = await connect_db()
         result = await conn.fetch(
-            "SELECT * FROM guardar_actividad($1,$2,$3)",i.fecha,i.hora,i.nota
+            "SELECT * FROM guardar_actividad($1,$2,$3,$4,$5)",i.fecha,i.hora,i.nota,i.id_u,i.id_act
         )
         await conn.close()
         if result:
