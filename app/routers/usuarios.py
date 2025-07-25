@@ -40,20 +40,18 @@ async def auth_usuario(u : UsuarioRegistrado):
     except Exception as e:
         raise HTTPException(500,f"Error al autenticar{str(e)}")
     
-@router.get("/get/itinerario/{idUser}", response_model=ItinerarioUsuario)
+@router.get("/get/itinerario/{idUser}", response_model=list[ItinerarioUsuario])
 async def get_itinerario(idUser: int):
     try:
         conn = await connect_db()
-        result = await conn.fetchrow(
+        result = await conn.fetch(
             "SELECT * FROM obtener_itinerario_usuario($1)", idUser
         )
-
         await conn.close()
-
-        if result:
-            return ItinerarioUsuario(**result)
+        if result: 
+            return[dict(row) for row in result]
         
-        raise HTTPException(status_code=404, detail="Itinerario no encontrado")
-
+        return[]
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error al obtener itinerario: {str(e)}")
+        raise HTTPException(500,f"error al cargar el itinerario desde la base de datos{str(e)}")
+        
