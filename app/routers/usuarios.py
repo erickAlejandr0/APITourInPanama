@@ -40,7 +40,7 @@ async def auth_usuario(u : UsuarioRegistrado):
     except Exception as e:
         raise HTTPException(500,f"Error al autenticar{str(e)}")
     
-@router.post("/get/itinerario/{idUser}", response_model=ItinerarioUsuario)
+@router.get("/get/itinerario/{idUser}", response_model=ItinerarioUsuario)
 async def get_itinerario(idUser: int):
     try:
         conn = await connect_db()
