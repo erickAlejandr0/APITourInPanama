@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request
 import asyncpg
 from app.Models.userModel import UsuarioNew, UsuarioRegistrado
+from app.Models.itinerarioModeloOut import ItinerarioUsuario
 from app.dataBase.db import connect_db
 
 router= APIRouter( 
@@ -39,4 +40,20 @@ async def auth_usuario(u : UsuarioRegistrado):
     except Exception as e:
         raise HTTPException(500,f"Error al autenticar{str(e)}")
     
+@router.post("/get/itinerario/{idUser}", response_model=ItinerarioUsuario)
+async def get_itinerario(idUser: int):
+    try:
+        conn = await connect_db()
+        result = await conn.fetchrow(
+            "SELECT * FROM obtener_itinerario_usuario($1)", idUser
+        )
 
+        await conn.close()
+
+        if result:
+            return ItinerarioUsuario(**result)
+        
+        raise HTTPException(status_code=404, detail="Itinerario no encontrado")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al obtener itinerario: {str(e)}")
