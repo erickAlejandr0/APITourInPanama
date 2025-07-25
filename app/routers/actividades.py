@@ -58,7 +58,7 @@ async def get_actividad(lat:float, lon:float, radio:float):
     except Exception as e:
         raise HTTPException(500,f"error al cargar actividades cercanas: {str(e)}")
     
-@router.post("/itinerario", response_model = MensajeOut)
+@router.post("/itinerario/guardar", response_model = MensajeOut)
 async def save_itinerario(i:Itinerario):
     try:
         conn = await connect_db()
