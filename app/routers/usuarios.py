@@ -11,11 +11,11 @@ router= APIRouter(
 @router.post("/registrar")
 async def reg_usuario(u: UsuarioNew):
     try:
-        conn = await connect_db()
-        result = await conn.fetchval(
-            "SELECT * FROM registrar_usuario($1,$2,$3,$4,$5)",
-            u.nombre,u.apellido,u.correo,u.contrasena,u.identificacion
-        )
+        async with connect_db() as conn:
+            result = await conn.fetchval(
+                "SELECT * FROM registrar_usuario($1,$2,$3,$4,$5)",
+                u.nombre,u.apellido,u.correo,u.contrasena,u.identificacion
+            )
         if result:
             return{"registro": True,
                    "id_usuario": result}
@@ -28,12 +28,11 @@ async def reg_usuario(u: UsuarioNew):
 @router.post("/auth")
 async def auth_usuario(u : UsuarioRegistrado):
     try:
-        conn = await connect_db()
-        result = await conn.fetchrow(
-            "SELECT * FROM autenticar_usuario($1,$2)",
-            u.email, u.password
-        )
-        await conn.close()
+        async with connect_db() as conn:
+            result = await conn.fetchrow(
+                "SELECT * FROM autenticar_usuario($1,$2)",
+                u.email, u.password
+            )
         if result:
             return(result)
         raise HTTPException(500,"error al autenticar")
@@ -43,15 +42,15 @@ async def auth_usuario(u : UsuarioRegistrado):
 @router.get("/get/itinerario/{idUser}", response_model=list[ItinerarioUsuario])
 async def get_itinerario(idUser: int):
     try:
-        conn = await connect_db()
-        result = await conn.fetch(
-            "SELECT * FROM obtener_itinerario_usuario($1)", idUser
-        )
-        await conn.close()
+        async with connect_db() as conn:
+            result = await conn.fetch(
+                "SELECT * FROM obtener_itinerario_usuario($1)", idUser
+            )
         if result: 
             return[dict(row) for row in result]
         
         return[]
     except Exception as e:
         raise HTTPException(500,f"error al cargar el itinerario desde la base de datos{str(e)}")
-        
+    
+
