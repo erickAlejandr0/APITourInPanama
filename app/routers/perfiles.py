@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request,Form, File, UploadFile
 import asyncpg
 from typing import Union
 from app.dataBase.db import connect_db
 from app.Models.actividadesModel_out import MensajeOut
 from app.Models.perfilModel import FotoPerfilDTO
+import uuid
 
 import os
 from dotenv import load_dotenv
@@ -35,17 +36,17 @@ async def subir_foto(user_id: str = Form(...), imagen: UploadFile = File(...)):
     # 2. Si hay una imagen previa, borrarla
     if imagen_actual:
         nombre_archivo = imagen_actual.split("/")[-1]
-        supabase.storage.from_(BUCKET).remove([nombre_archivo])
+        supabase.storage.from_(bucket).remove([nombre_archivo])
 
     # 3. Subir nueva imagen al bucket
     extension = imagen.filename.split(".")[-1]
     nuevo_nombre = f"{uuid.uuid4()}.{extension}"
     contenido = await imagen.read()
 
-    supabase.storage.from_(BUCKET).upload(nuevo_nombre, contenido)
+    supabase.storage.from_(bucket).upload(nuevo_nombre, contenido)
 
     # 4. Obtener URL pública
-    nueva_url = supabase.storage.from_(BUCKET).get_public_url(nuevo_nombre)
+    nueva_url = supabase.storage.from_(bucket).get_public_url(nuevo_nombre)
 
     # 5. Actualizar la tabla perfiles
     supabase.table("perfiles").update({"foto": nueva_url}).eq("id", user_id).execute()
