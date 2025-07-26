@@ -11,11 +11,11 @@ from supabase import create_client
 
 load_dotenv()  # Carga las variables del archivo .env
 
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-BUCKET = os.getenv("SUPABASE_BUCKET")
+supabaseURL = os.getenv("SUPABASE_URL")
+anon_key = os.getenv("SUPABASE_ANON_KEY")
+bucket = os.getenv("SUPABASE_BUCKET")
 
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+supabase = create_client(supabaseURL, anon_key)
 
 
 router = APIRouter(
