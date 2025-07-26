@@ -5,6 +5,19 @@ from app.dataBase.db import connect_db
 from app.Models.actividadesModel_out import MensajeOut
 from app.Models.perfilModel import FotoPerfilDTO
 
+import os
+from dotenv import load_dotenv
+from supabase import create_client
+
+load_dotenv()  # Carga las variables del archivo .env
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+BUCKET = os.getenv("SUPABASE_BUCKET")
+
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+
 router = APIRouter(
     prefix="/perfiles",
     tags=["perfiles"]
