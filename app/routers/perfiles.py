@@ -14,10 +14,10 @@ router = APIRouter(
 async def cargarFoto(id: int, u: FotoPerfilDTO):
     try:
 
-        async with connect_db() as conn:
-            result = await conn.fetchval(
-                "SELECT * FROM cargar_foto($1,$2)", id, u.foto_url
-            )
+        conn = await connect_db()
+        result = await conn.fetchval(
+             "SELECT * FROM cargar_foto($1,$2)", id, u.foto_url
+        )
 
         if not result:
             return MensajeOut(status_code=400, detail=" No se pudo guardar la foto de perfil")
@@ -25,18 +25,26 @@ async def cargarFoto(id: int, u: FotoPerfilDTO):
             return result
     except Exception as e:
         raise HTTPException(500,f"error al guardar foto  :{str(e)}")
+    finally:
+        if conn:
+            await conn.close() 
+    
     
 @router.get("/obtener-foto/{id}", response_model=MensajeOut)
 async def cargarFoto(id: int):
     try:
 
-        async with connect_db() as conn:
-            result = await conn.fetchval(
+        conn = await connect_db()
+        result = await conn.fetchval(
                 "SELECT * FROM get_foto_usuario($1)", id
-            )
+        )
+
         if not result:
             return MensajeOut(mensaje="No se pudo obtener la foto de perfil")
         else:
             return result
     except Exception as e:
         raise HTTPException(500,f"error al guardar foto  :{str(e)}")
+    finally:
+        if conn:
+            await conn.close() 

@@ -13,53 +13,63 @@ router = APIRouter(
 @router.get("/get", response_model=list[ActividadOut])
 async def get_actividad():
     try:
-        async with connect_db() as conn:
-            result = await conn.fetch(
-                "SELECT * FROM mostrar_actividades()"
-            )
+        conn = await connect_db()
+        result = await conn.fetch(
+            "SELECT * FROM mostrar_actividades()"
+        )
         if result: 
             return[dict(row) for row in result]
         
         return[]
     except Exception as e:
         raise HTTPException(500,f"error al cargar actividades desde la base de datos{str(e)}")
+    finally:
+        if conn:
+            await conn.close()
 
 @router.get("/{idcategoria}", response_model=list[ActividadOut])
 async def get_actividad(idcategoria: int):
     try:
-        async with connect_db() as conn:
-            result = await conn.fetch(
-                "SELECT * FROM actividades_por_categoria($1)", idcategoria
-            )
+        conn = await connect_db()
+        result = await conn.fetch(
+            "SELECT * FROM actividades_por_categoria($1)", idcategoria
+        )
         if result: 
             return[dict(row) for row in result]
         
         return[]
     except Exception as e:
         raise HTTPException(500,f"error al cargar actividades desde la base de datos{str(e)}")
+    finally:
+        if conn:
+            await conn.close()
         
 
 @router.get("/cercanas_de/{lat}/{lon}/{radio}", response_model=Union[list[ActividadCercanaOut], MensajeOut])
 async def get_actividad(lat:float, lon:float, radio:float):
     try:
-        async with connect_db() as conn:
-            result = await conn.fetch(
-                "SELECT * FROM actividades_cercanas_usuario($1,$2,$3)", lat, lon, radio
-            )
+        conn = await connect_db()
+        result = await conn.fetch(
+            "SELECT * FROM actividades_cercanas_usuario($1,$2,$3)", lat, lon, radio
+        )
         if not result:
             return MensajeOut(mensaje="No hay actividades cercanas en tu ubicación.")
 
         return[dict(row) for row in result]
     except Exception as e:
         raise HTTPException(500,f"error al cargar actividades cercanas: {str(e)}")
+    finally:
+        if conn:
+            await conn.close()
+    
     
 @router.post("/itinerario/guardar", response_model = MensajeOut)
 async def save_itinerario(i:Itinerario):
     try:
-        async with connect_db() as conn:
-            result = await conn.fetch(
-                "SELECT * FROM guardar_actividad($1,$2,$3,$4,$5)",i.fecha,i.hora,i.nota,i.id_u,i.id_act
-            )
+        conn = await connect_db()
+        result = await conn.fetch(
+            "SELECT * FROM guardar_actividad($1,$2,$3,$4,$5)",i.fecha,i.hora,i.nota,i.id_u,i.id_act
+        )
         if result:
             return MensajeOut(mensaje = "actividad guardada en el itinerario")
         else:
@@ -67,3 +77,6 @@ async def save_itinerario(i:Itinerario):
         
     except Exception as e:
         raise HTTPException(500,f"error al guardar el itinerario:{str(e)}")
+    finally:
+        if conn:
+            await conn.close() 
