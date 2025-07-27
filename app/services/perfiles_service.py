@@ -47,7 +47,7 @@ async def cargar_nueva_foto(
         return None
 
     # 4. Obtener URL pública
-    nueva_url = supabase.storage.from_(bucket).get_public_url(nuevo_nombre).public_url
+    nueva_url = supabase.storage.from_(bucket).get_public_url(nuevo_nombre)
 
     # 5. Actualizar tabla perfil
     try:
