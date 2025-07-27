@@ -64,4 +64,4 @@ async def cargar_nueva_foto(
         print(f"Error actualizando la BD: {e}")
         return None
 
-    return nueva_url
+    return {"nueva_url": nueva_url}
