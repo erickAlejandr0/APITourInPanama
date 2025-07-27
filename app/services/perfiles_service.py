@@ -23,7 +23,7 @@ async def cargar_nueva_foto(
     nuevo_nombre = f"{uuid.uuid4()}.{extension}"
     contenido = await file.read()
 
-    supabase.storage.from_(bucket).upload(nuevo_nombre, contenido)
+    supabase.storage.from_(bucket).upload(nuevo_nombre, contenido,{"contentType": f"image/{extension}"})
 
     # 4. Obtener URL pública
     nueva_url = supabase.storage.from_(bucket).get_public_url(nuevo_nombre)
