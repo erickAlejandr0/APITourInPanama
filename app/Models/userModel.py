@@ -8,6 +8,7 @@ class UsuarioNew(BaseModel):
     correo:str
     contrasena:str
     identificacion:str
+    foto: str
 
 class UsuarioRegistrado(BaseModel):
     email:str
