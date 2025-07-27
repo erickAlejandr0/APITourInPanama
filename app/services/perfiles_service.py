@@ -3,14 +3,16 @@ from urllib.parse import urlparse
 from supabase import Client
 from fastapi import UploadFile
 from typing import Optional
+from urllib.parse import unquote
 
 def obtener_ruta_storage(url: str, bucket: str) -> str:
     parsed_url = urlparse(url)
     prefix = f"/storage/v1/object/public/{bucket}/"
     if parsed_url.path.startswith(prefix):
-        return parsed_url.path[len(prefix):]
+        ruta = parsed_url.path[len(prefix):]
     else:
-        return parsed_url.path.lstrip("/")
+        ruta = parsed_url.path.lstrip("/")
+    return unquote(ruta) 
 
 async def cargar_nueva_foto(
     supabase: Client,
