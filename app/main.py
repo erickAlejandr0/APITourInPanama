@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import usuarios, actividades,perfiles
+from routers import usuarios, actividades,perfiles
 from contextlib import asynccontextmanager
 
 
@@ -9,6 +9,10 @@ app = FastAPI(
     version="1.0",
     
 )
+
+@app.get("/")
+def root():
+    return {"mensaje": "API funcionando correctamente"}
 
 
 # Configuración CORS

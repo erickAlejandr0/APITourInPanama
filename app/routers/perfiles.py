@@ -5,6 +5,7 @@ from app.dataBase.db import connect_db
 from app.Models.actividadesModel_out import MensajeOut
 from app.Models.perfilModel import FotoPerfilDTO
 import uuid
+from app.services.perfiles_service import cargar_nueva_foto
 
 import os
 from dotenv import load_dotenv
@@ -27,32 +28,11 @@ router = APIRouter(
 
 
 
-@router.put("/cargar/{id}", response_model=MensajeOut)
-async def subir_foto(user_id: str = Form(...), imagen: UploadFile = File(...)):
-    # 1. Obtener ruta de imagen actual desde la BD
-    perfil = supabase.table("perfiles").select("foto").eq("id", user_id).single().execute()
-    imagen_actual = perfil.data["foto"] if perfil.data else None
-
-    # 2. Si hay una imagen previa, borrarla
-    if imagen_actual:
-        nombre_archivo = imagen_actual.split("/")[-1]
-        supabase.storage.from_(bucket).remove([nombre_archivo])
-
-    # 3. Subir nueva imagen al bucket
-    extension = imagen.filename.split(".")[-1]
-    nuevo_nombre = f"{uuid.uuid4()}.{extension}"
-    contenido = await imagen.read()
-
-    supabase.storage.from_(bucket).upload(nuevo_nombre, contenido)
-
-    # 4. Obtener URL pública
-    nueva_url = supabase.storage.from_(bucket).get_public_url(nuevo_nombre)
-
-    # 5. Actualizar la tabla perfiles
-    supabase.table("perfiles").update({"foto": nueva_url}).eq("id", user_id).execute()
-
+@router.put("/cargar/{user_id}")
+async def subir_foto(user_id: str, imagen: UploadFile = File(...)):
+    nueva_url= await cargar_nueva_foto(supabase, bucket, user_id, imagen)
     return {"mensaje": "Imagen actualizada", "url": nueva_url}
-    
+
 @router.get("/obtener-foto/{id}", response_model=MensajeOut)
 async def cargarFoto(id: int):
     try:
