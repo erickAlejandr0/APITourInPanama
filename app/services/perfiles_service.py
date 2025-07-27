@@ -7,12 +7,17 @@ from urllib.parse import unquote
 
 def obtener_ruta_storage(url: str, bucket: str) -> str:
     parsed_url = urlparse(url)
+    # Normalizar el path para quitar doble slash
+    path = parsed_url.path.replace('//', '/')
     prefix = f"/storage/v1/object/public/{bucket}/"
-    if parsed_url.path.startswith(prefix):
-        ruta = parsed_url.path[len(prefix):]
+
+    if path.startswith(prefix):
+        ruta = path[len(prefix):]
     else:
-        ruta = parsed_url.path.lstrip("/")
-    return unquote(ruta) 
+        ruta = path.lstrip("/")
+
+    return unquote(ruta)
+    
 
 async def cargar_nueva_foto(
     supabase: Client,
