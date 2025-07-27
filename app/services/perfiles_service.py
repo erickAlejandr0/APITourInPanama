@@ -25,6 +25,7 @@ async def cargar_nueva_foto(
     # 2. Borrar si hay imagen previa
     if imagen_actual:
         ruta_borrar = obtener_ruta_storage(imagen_actual, bucket)
+        print(f"ruta a borrar: {ruta_borrar}")
         try:
             res = supabase.storage.from_(bucket).remove([ruta_borrar])
             # res puede ser lista de nombres eliminados, si quieres imprimir:
