@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import usuarios, actividades,perfiles
+from .routers import usuarios, actividades,perfiles
 from contextlib import asynccontextmanager
 
 
