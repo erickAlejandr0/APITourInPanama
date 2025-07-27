@@ -25,29 +25,35 @@ async def cargar_nueva_foto(
     # 2. Borrar si hay imagen previa
     if imagen_actual:
         ruta_borrar = obtener_ruta_storage(imagen_actual, bucket)
-        res = supabase.storage.from_(bucket).remove([ruta_borrar])
-        if res.error:
-            print(f"Error borrando archivo anterior: {res.error}")
+        try:
+            res = supabase.storage.from_(bucket).remove([ruta_borrar])
+            # res puede ser lista de nombres eliminados, si quieres imprimir:
+            print(f"Archivos eliminados: {res}")
+        except Exception as e:
+            print(f"Error borrando archivo anterior: {e}")
 
     # 3. Subir nueva imagen
     extension = file.filename.split(".")[-1].lower()
     nuevo_nombre = f"{uuid.uuid4()}.{extension}"
     contenido = await file.read()
 
-    res_upload = supabase.storage.from_(bucket).upload(
-        nuevo_nombre, contenido, {"contentType": f"image/{extension}"}
-    )
-    if res_upload.error:
-        print(f"Error subiendo archivo: {res_upload.error}")
+    try:
+        res_upload = supabase.storage.from_(bucket).upload(
+            nuevo_nombre, contenido, {"contentType": f"image/{extension}"}
+        )
+        # Aquí también puedes verificar si res_upload es error o no según doc
+    except Exception as e:
+        print(f"Error subiendo archivo: {e}")
         return None
 
     # 4. Obtener URL pública
     nueva_url = supabase.storage.from_(bucket).get_public_url(nuevo_nombre).public_url
 
     # 5. Actualizar tabla perfil
-    res_update = supabase.table("perfil").update({"foto_perfil": nueva_url}).eq("id_usuario", user_id).execute()
-    if res_update.error:
-        print(f"Error actualizando la BD: {res_update.error}")
+    try:
+        res_update = supabase.table("perfil").update({"foto_perfil": nueva_url}).eq("id_usuario", user_id).execute()
+    except Exception as e:
+        print(f"Error actualizando la BD: {e}")
         return None
 
     return nueva_url
