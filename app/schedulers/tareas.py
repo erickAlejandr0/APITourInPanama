@@ -1,5 +1,6 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import asyncpg
+import asyncio
 from app.dataBase.db import connect_db
 
 async def eliminar_actividades_expiradas():
@@ -13,17 +14,6 @@ async def eliminar_actividades_expiradas():
         if conn:
             await conn.close()
 
-def iniciar_scheduler():
-    print("Iniciando scheduler...")
-    scheduler = AsyncIOScheduler()
-    # Ejecutar cada hora
-    scheduler.add_job(
-        eliminar_actividades_expiradas,
-        trigger="interval",
-        minutes=1,
-        id="eliminar_actividades_expiradas",  # opcional: para identificar el job
-        replace_existing=True  # reemplaza si ya existe un job con el mismo ID
-        
-    )
-    scheduler.start()
-    print("Scheduler iniciado, itinerarios limpiados correctamente")
+async def iniciar_scheduler():
+    print("Ejecutando limpieza inicial del itinerario en background...")
+    asyncio.create_task(eliminar_actividades_expiradas())

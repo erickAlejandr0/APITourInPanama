@@ -6,7 +6,7 @@ from .schedulers.tareas import iniciar_scheduler
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    iniciar_scheduler()
+    await iniciar_scheduler()
     yield
 
 
