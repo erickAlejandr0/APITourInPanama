@@ -4,11 +4,16 @@ from .routers import usuarios, actividades,perfiles
 from contextlib import asynccontextmanager
 from .schedulers.tareas import iniciar_scheduler
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    iniciar_scheduler()
+    yield
 
 
 app = FastAPI(
     title="API Movil",
     version="1.0",
+    lifespan=lifespan
     
 )
 
@@ -30,10 +35,3 @@ app.add_middleware(
 app.include_router(usuarios.router)
 app.include_router(actividades.router)
 app.include_router(perfiles.router)
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    iniciar_scheduler()
-    yield
-app = FastAPI(lifespan=lifespan)
