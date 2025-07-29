@@ -3,6 +3,7 @@ import asyncpg
 from typing import Union
 from app.Models.actividadesModel_out import ActividadOut,ActividadCercanaOut,MensajeOut
 from app.Models.itinerarioModel import Itinerario
+from app.Models.comentariosModel import Comentarios,ComentariosOut
 from app.dataBase.db import connect_db
 
 router = APIRouter(
@@ -80,3 +81,42 @@ async def save_itinerario(i:Itinerario):
     finally:
         if conn:
             await conn.close() 
+
+
+@router.post("/crear/comentarios", response_model = MensajeOut)
+async def crear_comentarios(c: Comentarios):
+    try:
+        conn = await connect_db()
+        result = await conn.fetch(
+            "SELECT * FROM crear_comentario($1,$2,$3,$4,$5)",c.id_usuario,c.id_actividad,c.titulo,c.comentario,c.calificacion        
+            )
+        if result:
+            return MensajeOut(mensaje = "¡comentario publicado!")
+        else:
+            raise HTTPException(status_code=400, detail="error al publicar")
+    
+    except asyncpg.exceptions.PostgresError as e:
+        raise HTTPException(status_code=400, detail=str(e).split("ERROR: ")[-1].strip())
+        
+    except Exception as e:
+        raise HTTPException(500,f"ERROR:    {str(e)}")
+    finally:
+        if conn:
+            await conn.close() 
+
+
+@router.get("/get/comentarios", response_model=Union[list[ComentariosOut], MensajeOut])
+async def get_comentarios(id_usuario: int, id_actividad: int):
+    try:
+        conn = await connect_db()
+        result = await conn.fetch(
+            "SELECT * FROM obtener_comentarios_actividad($1,$2)",id_actividad,id_usuario )
+        if not result:
+            return MensajeOut(mensaje="No hay comentarios, se el primero en comentar!")
+
+        return[dict(row) for row in result]
+    except Exception as e:
+        raise HTTPException(500,f"error al cargar comentarios:   {str(e)}")
+    finally:
+        if conn:
+            await conn.close()

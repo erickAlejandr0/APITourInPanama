@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import usuarios, actividades,perfiles
 from contextlib import asynccontextmanager
+from .schedulers.tareas import iniciar_scheduler
+
 
 
 app = FastAPI(
@@ -18,7 +20,7 @@ def root():
 # Configuración CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # ajustar en producción
+    allow_origins=["*"],  
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -28,3 +30,10 @@ app.add_middleware(
 app.include_router(usuarios.router)
 app.include_router(actividades.router)
 app.include_router(perfiles.router)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    iniciar_scheduler()
+    yield
+app = FastAPI(lifespan=lifespan)
