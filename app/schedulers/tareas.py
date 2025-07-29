@@ -20,7 +20,7 @@ def iniciar_scheduler():
     scheduler.add_job(
         eliminar_actividades_expiradas,
         trigger="interval",
-        minutes=3,
+        minutes=1,
         id="eliminar_actividades_expiradas",  # opcional: para identificar el job
         replace_existing=True  # reemplaza si ya existe un job con el mismo ID
         
