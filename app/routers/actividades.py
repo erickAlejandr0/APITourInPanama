@@ -29,7 +29,7 @@ async def get_actividad():
             await conn.close()
 
 @router.get("/{idcategoria}", response_model=list[ActividadOut])
-async def get_actividad(idcategoria: int):
+async def get_actividad_categoria(idcategoria: int):
     try:
         conn = await connect_db()
         result = await conn.fetch(
@@ -47,7 +47,7 @@ async def get_actividad(idcategoria: int):
         
 
 @router.get("/cercanas_de/{lat}/{lon}/{radio}", response_model=Union[list[ActividadCercanaOut], MensajeOut])
-async def get_actividad(lat:float, lon:float, radio:float):
+async def get_actividad_cercana(lat:float, lon:float, radio:float):
     try:
         conn = await connect_db()
         result = await conn.fetch(
