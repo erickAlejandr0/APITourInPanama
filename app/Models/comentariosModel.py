@@ -18,4 +18,5 @@ class ComentariosOut(BaseModel):
     nombre_usuario: str
     apellido_usuario: str
     foto: str
+    rating: float
     sesion: bool

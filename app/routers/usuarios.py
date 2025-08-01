@@ -3,6 +3,7 @@ import asyncpg
 from app.Models.userModel import UsuarioNew, UsuarioRegistrado
 from app.Models.itinerarioModeloOut import ItinerarioUsuario
 from app.dataBase.db import connect_db
+from app.schedulers.tareas import iniciar_scheduler
 
 router= APIRouter( 
     prefix= "/user",
@@ -62,4 +63,7 @@ async def get_itinerario(idUser: int):
         if conn:
             await conn.close()
     
-
+@router.delete("/actividades-expiradas")
+async def eliminar_actividad():
+    await iniciar_scheduler()
+    return {"mensaje": "Actividades expiradas eliminadas manualmente desde el endpoint"}
