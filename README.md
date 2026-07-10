@@ -227,9 +227,13 @@ La API retorna códigos de estado HTTP estándar:
 
 ## 📄 Licencia
 
-Este proyecto está bajo una licencia de código abierto.
+![License](https://img.shields.io/badge/License-Proprietary-red?style=flat-square)
+
+Este es un proyecto privado y propietario. Todos los derechos reservados
 
 ---
+
+
 
 <div align="center">
 
